@@ -1,0 +1,214 @@
+{
+  "main": {
+    "id": "0134da87c865c0f2",
+    "type": "split",
+    "children": [
+      {
+        "id": "612e854d9d549e13",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "422296e1df5e5db9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "compendium/books/dungeon-masters-guide-2024/06-chapter-6-cosmology.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "06-chapter-6-cosmology"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "222f11cf9174a17d",
+    "type": "split",
+    "children": [
+      {
+        "id": "4a586604e41aa1a5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5ac8882a5193c996",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "bd195cb9f92d7b2c",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "7172fdf6855448c7",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "2e440be427d982e3",
+    "type": "split",
+    "children": [
+      {
+        "id": "b8bdae9734495cf5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "dd42a98e44df9cec",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "compendium/books/dungeon-masters-guide-2024/06-chapter-6-cosmology.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for 06-chapter-6-cosmology"
+            }
+          },
+          {
+            "id": "6177cc9061a2d12d",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "compendium/books/dungeon-masters-guide-2024/06-chapter-6-cosmology.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from 06-chapter-6-cosmology"
+            }
+          },
+          {
+            "id": "5a027d9523245782",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "cade58802796d20a",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "compendium/books/dungeon-masters-guide-2024/06-chapter-6-cosmology.md"
+              },
+              "icon": "lucide-list",
+              "title": "Outline of 06-chapter-6-cosmology"
+            }
+          }
+        ],
+        "currentTab": 3
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "422296e1df5e5db9",
+  "lastOpenFiles": [
+    "compendium/books/dungeon-masters-guide-2024/03-chapter-3-dms-toolbox.md",
+    "compendium/books/monster-manual-2014/2-appendix-a-miscellaneous-creatures.md",
+    "compendium/books/dungeon-masters-guide-2024/img/249-14-001-dungeon-masters-guide.webp",
+    "compendium/books/dungeon-masters-guide-2024/img/105-07-002-bag-of-coins.webp",
+    "compendium/items/img/hat-of-vermin.webp",
+    "compendium/books/dungeon-masters-guide-2024/img/228-map-12-10-roadside-inn.webp",
+    "compendium/items/img/cloak-of-billowing.webp",
+    "compendium/books/dungeon-masters-guide-2024/img/096-06-013-the-gloaming-court.webp",
+    "compendium/books/dungeon-masters-guide-2024/img/050-03-002-death-of-a-dragon.webp",
+    "compendium/books/dungeon-masters-guide-2024/img/039-02-019-npc-tracker-sheet.webp",
+    "compendium/books/dungeon-masters-guide-2024/img/098-06-015-mount-celestia.webp",
+    "compendium/books/dungeon-masters-guide-2024/img/081-05-009-tomb-of-horrors.webp",
+    "compendium/bastions/img",
+    "compendium/vehicles/token",
+    "compendium/tables/urban-chase-complications-xdmg.md",
+    "compendium/tables/special-purpose-sentient-items-communication-xdmg.md",
+    "compendium/tables/spell-damage-xdmg.md",
+    "compendium/tables/5000-gp-gemstones-xdmg.md",
+    "compendium/tables/treasure-xdmg.md",
+    "compendium/tables/relics-common-xdmg.md",
+    "compendium/tables/trade-goods-xdmg.md",
+    "compendium/tables/magic-item-crafting-time-and-cost-xdmg.md",
+    "compendium/tables/levels-1720-masters-of-the-world-levels-1720-adventure-situations-xdmg.md",
+    "compendium/tables/variant-training-to-gain-levels-training-to-gain-levels-xdmg.md",
+    "compendium/tables/artifact-properties-minor-detrimental-properties-xdmg.md",
+    "compendium/tables/armaments-legendary-xdmg.md",
+    "compendium/tables/psychic-wind-psychic-effects-xdmg.md",
+    "compendium/tables/sentient-items-special-purpose-xdmg.md",
+    "compendium/tables/wilderness-chase-complications-xdmg.md",
+    "compendium/tables/layers-of-ysgard-xdmg.md",
+    "compendium/tables/750-gp-art-objects-xdmg.md",
+    "compendium/tables/1000-gp-gemstones-xdmg.md",
+    "compendium/tables/settlement-tables-and-tracker-current-calamities-xdmg.md",
+    "compendium/tables/level-based-renown-xdmg.md",
+    "compendium/tables/layers-of-bytopia-xdmg.md",
+    "compendium/tables/enlarging-basic-facilities-xdmg.md",
+    "compendium/tables/layers-of-the-beastlands-xdmg.md",
+    "compendium/tables/ending-a-chase-escape-factors-xdmg.md",
+    "compendium/books/dungeon-masters-guide-2024/img",
+    "compendium/books/dungeon-masters-guide-2024",
+    "compendium/bastions",
+    "compendium/bestiary/token",
+    "compendium/bestiary/img",
+    "compendium/backgrounds/img",
+    "compendium/books/players-handbook-2024/img",
+    "compendium/books/players-handbook-2024"
+  ]
+}
