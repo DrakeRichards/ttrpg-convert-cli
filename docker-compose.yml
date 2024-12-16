@@ -1,0 +1,7 @@
+services:
+  ttrpg-convert:
+    build: .
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+      - ./config:/app/config
