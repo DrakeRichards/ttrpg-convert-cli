@@ -23,9 +23,9 @@ I use [Obsidian](https://obsidian.md) to keep track of my campaign notes. This p
 
 > [!TIP]
 >
-> -   🚜 [**Review the changelog**](CHANGELOG.md) for new capabilities (✨) and breaking changes (🔥💥).
-> -   🔮 Check out [**Conventions**](#conventions) and [**Recommendations**](#recommendations-for-using-the-cli).
-> -   🔥 Support for the 5e 2024 ruleset is [in progress](https://github.com/ebullient/ttrpg-convert-cli/discussions/586).
+> - 🚜 [**Review the changelog**](CHANGELOG.md) for new capabilities (✨) and breaking changes (🔥💥).
+> - 🔮 Check out [**Conventions**](#conventions) and  [**Recommendations**](#recommendations-for-using-the-cli).
+> - 🔥 Support for the 5e 2024 ruleset is [in progress](https://github.com/ebullient/ttrpg-convert-cli/discussions/586).  
 
 ## Using the Command Line
 
@@ -34,12 +34,12 @@ If you're new to it, we have resources to help you get started below.
 
 If you don't have a favorite method already, or you don't know what those words mean, here are some resources to get you started:
 
--   For macOS / OSX users:
-    -   Start with the built-in `Terminal` application.
-    -   [Learn the macOS Command Line][]
--   For Windows users:
-    -   [A Beginner's Guide to the Windows Command Line][]
-    -   See the [Windows README](README-WINDOWS.md)
+- For macOS / OSX users:
+    - Start with the built-in `Terminal` application.
+    - [Learn the macOS Command Line][]
+- For Windows users:
+    - [A Beginner's Guide to the Windows Command Line][]
+    - See the [Windows README](README-WINDOWS.md)
 
 [Learn the macOS Command Line]: https://blog.teamtreehouse.com/introduction-to-the-mac-os-x-command-line
 [A Beginner's Guide to the Windows Command Line]: https://www.makeuseof.com/tag/a-beginners-guide-to-the-windows-command-line/
@@ -49,21 +49,21 @@ If you don't have a favorite method already, or you don't know what those words 
 There are several options for running `ttrpg-convert`.
 Choose the one you are most comfortable with:
 
--   **Using Windows?** See the [Windows README](README-WINDOWS.md).
--   `jbang`: [Use JBang!][jbang] (hides Java; sets up command aliases).
--   `brew`: [Use Homebrew (macOS or Linux)][brew] (uses platform binaries).
--   `bin`: [Use a pre-built platform binary][bin] (no Java required).
--   `jar`: [Use Java to run the jar][jar].
--   `src`: [Build from source][src].
+- **Using Windows?** See the [Windows README](README-WINDOWS.md).
+- `jbang`: [Use JBang!][jbang] (hides Java; sets up command aliases).
+- `brew`: [Use Homebrew (macOS or Linux)][brew] (uses platform binaries).
+- `bin`: [Use a pre-built platform binary][bin] (no Java required).
+- `jar`: [Use Java to run the jar][jar].
+- `src`: [Build from source][src].
 
-| Platform      | Options                                                       |
-| ------------- | ------------------------------------------------------------- |
-| Linux         | [jbang][], [brew][], [bin][], [jar][], [src][]                |
-| Mac (Arm)     | [brew][], [jbang][], [bin][], [jar][], [src][]                |
-| Mac (Intel)   | [brew][], [jbang][], [bin][], [jar][], [src][]                |
-| Windows       | [📝](README-WINDOWS.md), [jbang][], [bin][], [jar][], [src][] |
-| Windows (Old) | [📝](README-WINDOWS.md), [jbang][], [jar][], [src][]          |
-| Windows (WSL) | [brew][], [jbang][], [jar][], [src][]                         |
+| Platform       | Options  |
+|----------------|----------|
+|  Linux         | [jbang][], [brew][], [bin][], [jar][], [src][] |
+|  Mac (Arm)     | [brew][], [jbang][], [bin][], [jar][], [src][] |
+|  Mac (Intel)   | [brew][], [jbang][], [bin][], [jar][], [src][] |
+|  Windows       | [📝](README-WINDOWS.md), [jbang][], [bin][], [jar][], [src][]  |
+|  Windows (Old) | [📝](README-WINDOWS.md), [jbang][], [jar][], [src][]  |
+|  Windows (WSL) | [brew][], [jbang][], [jar][], [src][] |
 
 [jbang]: ./docs/alternateRun.md#use-jbang
 [brew]: ./docs/alternateRun.md#use-homebrew
@@ -73,11 +73,11 @@ Choose the one you are most comfortable with:
 
 ## Recommendations for using the CLI
 
--   🔐 Treat generated content as a big ball of mud. Stick it in a corner of your vault and _treat it as read-only_.
+- 🔐 Treat generated content as a big ball of mud. Stick it in a corner of your vault and *treat it as read-only*.
 
     Trust us, you will want to regenerate content from time to time. It is cheap and easy to do if you don't have your own edits to worry about.
 
--   🔎 Have the CLI generate output into a separate directory and use a comparison tool to preview changes.
+- 🔎 Have the CLI generate output into a separate directory and use a comparison tool to preview changes.
 
     You can use `git diff` to compare arbitrary directories. For example:
 
@@ -85,61 +85,59 @@ Choose the one you are most comfortable with:
     git diff --no-index vault/compendium/bestiary generated/compendium/bestiary
     ```
 
--   📑 Use a copy tool that only updates modified files, like [rsync][], to avoid unnecessary file copying when updating your vault. Use the checksum option (`-c`) to compare file contents; the file modification date is meaningless given generated files are recreated when the tool is run. We have some suggestions in [discussion #220][sync-discussion], but it is very much a work in progress.
+- 📑 Use a copy tool that only updates modified files, like [rsync][], to avoid unnecessary file copying when updating your vault. Use the checksum option (`-c`) to compare file contents; the file modification date is meaningless given generated files are recreated when the tool is run. We have some suggestions in [discussion #220][sync-discussion], but it is very much a work in progress.
 
 [rsync]: https://stackoverflow.com/a/19540611
 [sync-discussion]: https://github.com/ebullient/ttrpg-convert-cli/discussions/220
 
 ### Required Plugins
 
--   **Admonitions** ([git](https://github.com/javalent/admonitions)/[obsidian](obsidian://show-plugin?id=obsidian-admonition)): The Admonitions plugin supports a codeblock style admonition used for more complex embedded content. See [Admonition plugin notes](docs/README.md#admonitions) for more recommendations.
+- **Admonitions** ([git](https://github.com/javalent/admonitions)/[obsidian](obsidian://show-plugin?id=obsidian-admonition)): The Admonitions plugin supports a codeblock style admonition used for more complex embedded content. See [Admonition plugin notes](docs/README.md#admonitions) for more recommendations.
 
 ### Recommended Plugins
 
--   **Force Note View Mode by Front Matter** ([git](https://github.com/bwydoogh/obsidian-force-view-mode-of-note)/[obsidian](obsidian://show-plugin?id=obsidian-view-mode-by-frontmatter)): I use this plugin to treat these generated notes as essentially read-only. See [Force Note View Mode plugin settings](docs/README.md#force-note-view-mode-by-front-matter) for recommendations.
+- **Force Note View Mode by Front Matter** ([git](https://github.com/bwydoogh/obsidian-force-view-mode-of-note)/[obsidian](obsidian://show-plugin?id=obsidian-view-mode-by-frontmatter)): I use this plugin to treat these generated notes as essentially read-only. See [Force Note View Mode plugin settings](docs/README.md#force-note-view-mode-by-front-matter) for recommendations.
 
--   **Fantasy Statblocks** ([git](https://github.com/javalent/fantasy-statblocks)/[obsidian](obsidian://show-plugin?id=obsidian-5e-statblocks)): Templates for rendering monsters can define a `statblock` in the document body or provide a full or abridged YAML monster in the document header to update monsters in the plugin's bestiary.
+- **Fantasy Statblocks** ([git](https://github.com/javalent/fantasy-statblocks)/[obsidian](obsidian://show-plugin?id=obsidian-5e-statblocks)): Templates for rendering monsters can define a `statblock` in the document body or provide a full or abridged YAML monster in the document header to update monsters in the plugin's bestiary.
+    - See [Fantasy Statblocks plugin settings](docs/README.md#fantasy-statblocks) for recommendations.
+    - See [Templates](examples/templates) for related template customization.
 
-    -   See [Fantasy Statblocks plugin settings](docs/README.md#fantasy-statblocks) for recommendations.
-    -   See [Templates](examples/templates) for related template customization.
+- **Initiative Tracker** ([git](https://github.com/javalent/initiative-tracker)/[obsidian](obsidian://show-plugin?id=initiative-tracker)): Templates for rendering monsters can include information in the header to define monsters that the Initiative Tracker can use when constructing encounters. See [Initiative Tracker plugin settings](docs/README.md#initiative-tracker) for recommendations.
 
--   **Initiative Tracker** ([git](https://github.com/javalent/initiative-tracker)/[obsidian](obsidian://show-plugin?id=initiative-tracker)): Templates for rendering monsters can include information in the header to define monsters that the Initiative Tracker can use when constructing encounters. See [Initiative Tracker plugin settings](docs/README.md#initiative-tracker) for recommendations.
-
--   **Dataview** ([git](https://github.com/blacksmithgu/obsidian-dataview)/[obsidian](obsidian://show-plugin?id=dataview)): This plugin can be used to create custom views of the data and to create custom queries to find and display data in your vault. See [Working with Dataview](docs/README.md#working-with-dataview) for recommendations.
+- **Dataview** ([git](https://github.com/blacksmithgu/obsidian-dataview)/[obsidian](obsidian://show-plugin?id=dataview)): This plugin can be used to create custom views of the data and to create custom queries to find and display data in your vault. See [Working with Dataview](docs/README.md#working-with-dataview) for recommendations.
 
 ## Conventions
 
--   **Links.** Documents generated by this plugin will use markdown links rather than wiki links. A [CSS snippet](examples/css-snippets/hide-markdown-link-url.css) can make these links less intrusive in edit mode by hiding the URL portion of the string.
+- **Links.** Documents generated by this plugin will use markdown links rather than wiki links. A [CSS snippet](examples/css-snippets/hide-markdown-link-url.css) can make these links less intrusive in edit mode by hiding the URL portion of the string.
 
--   **File names.** To avoid conflicts and issues with different operating systems, all file names are slugified (all lowercase, symbols stripped, and spaces replaced by dashes). This is a familiar convention for those used to Jekyll, Hugo, or other blogging systems.
+- **File names.** To avoid conflicts and issues with different operating systems, all file names are slugified (all lowercase, symbols stripped, and spaces replaced by dashes). This is a familiar convention for those used to Jekyll, Hugo, or other blogging systems.
 
-    -   File names for resources outside of the core books (PHB, MM, and DMG) have the abbreviated source name appended to the end to avoid file name collisions.
-    -   All files have an `aliases` attribute that contains the original name of the resource.
+    - File names for resources outside of the core books (PHB, MM, and DMG) have the abbreviated source name appended to the end to avoid file name collisions.
+    - All files have an `aliases` attribute that contains the original name of the resource.
 
--   **Organization.** Files are generated in two roots: `compendium` and `rules`. The location of these roots is [configurable](docs/configuration.md#specify-target-paths-paths-key). These directories will be populated based on the sources you have enabled.
+- **Organization.** Files are generated in two roots: `compendium` and `rules`. The location of these roots is [configurable](docs/configuration.md#specify-target-paths-paths-key). These directories will be populated based on the sources you have enabled.
 
-    -   `compendium` contains files for items, spells, monsters, etc. The `compendium` directory is further organized into subdirectories for each type of content. For example, all items are in the `compendium/items` directory.
+    - `compendium` contains files for items, spells, monsters, etc. The `compendium` directory is further organized into subdirectories for each type of content. For example, all items are in the `compendium/items` directory.
 
-    -   `rules` contains files for conditions, weapon properties, variant rules, etc.
+    - `rules` contains files for conditions, weapon properties, variant rules, etc.
 
-    -   `css-snippets` will contain **CSS files for special fonts** used by some content. You will need to copy these snippets into your vault (`.obsidian/snippets`) and enable them (`Appearance -> Snippets`) to ensure all content in your vault is styled correctly.
+    - `css-snippets` will contain **CSS files for special fonts** used by some content. You will need to copy these snippets into your vault (`.obsidian/snippets`) and enable them (`Appearance -> Snippets`) to ensure all content in your vault is styled correctly.
 
--   **Styles.** Every document has a `cssclasses` attribute that assigns a CSS class. We have some [CSS snippets](examples/css-snippets/) that you can use to customize elements of the compendium.
+- **Styles.** Every document has a `cssclasses` attribute that assigns a CSS class. We have some [CSS snippets](examples/css-snippets/) that you can use to customize elements of the compendium.
+    - 5eTools: `json5e-background`, `json5e-class`, `json5e-deck`, `json5e-deity`, `json5e-feat`, `json5e-hazard`, `json5e-item`, `json5e-monster`, `json5e-note`, `json5e-object`, `json5e-psionic`, `json5e-race`, `json5e-reward`, `json5e-spell`, and `json5e-vehicle`.
+    - Pf2eTools: `pf2e`, `pf2e-ability`, `pf2e-action`, `pf2e-affliction`, `pf2e-archetype`, `pf2e-background`, `pf2e-book`, `pf2e-deity`, `pf2e-feat`, `pf2e-hazard`, `pf2e-index`, `pf2e-item`, `pf2e-note`, `pf2e-ritual`, `pf2e-spell`, `pf2e-trait`.
 
-    -   5eTools: `json5e-background`, `json5e-class`, `json5e-deck`, `json5e-deity`, `json5e-feat`, `json5e-hazard`, `json5e-item`, `json5e-monster`, `json5e-note`, `json5e-object`, `json5e-psionic`, `json5e-race`, `json5e-reward`, `json5e-spell`, and `json5e-vehicle`.
-    -   Pf2eTools: `pf2e`, `pf2e-ability`, `pf2e-action`, `pf2e-affliction`, `pf2e-archetype`, `pf2e-background`, `pf2e-book`, `pf2e-deity`, `pf2e-feat`, `pf2e-hazard`, `pf2e-index`, `pf2e-item`, `pf2e-note`, `pf2e-ritual`, `pf2e-spell`, `pf2e-trait`.
-
--   **Admonitions.** Generated content uses code-block-style [Admonitions](docs/README.md#admonitions) in addition to Obsidian callouts. We have [Admonition definitions](examples/admonitions/) that you can import to ensure these admonition/callout types are defined.
-    -   `ad-statblock`
-    -   5eTools: `ad-flowchart`, `ad-gallery`, `ad-embed-action`, `ad-embed-feat`, `ad-embed-monster`, `ad-embed-object`, `ad-embed-race`, `ad-embed-spell`, `ad-embed-table`
-    -   Pf2eTools: `ad-embed-ability`, `ad-embed-action`, `ad-embed-affliction`, `ad-embed-avatar`, `ad-embed-disease`, `ad-embed-feat`, `ad-embed-item`, `ad-pf2-note`, `ad-pf2-ritual`.
+- **Admonitions.** Generated content uses code-block-style [Admonitions](docs/README.md#admonitions) in addition to Obsidian callouts. We have [Admonition definitions](examples/admonitions/) that you can import to ensure these admonition/callout types are defined.
+    - `ad-statblock`
+    - 5eTools: `ad-flowchart`, `ad-gallery`, `ad-embed-action`, `ad-embed-feat`, `ad-embed-monster`, `ad-embed-object`, `ad-embed-race`, `ad-embed-spell`, `ad-embed-table`
+    - Pf2eTools: `ad-embed-ability`, `ad-embed-action`, `ad-embed-affliction`, `ad-embed-avatar`, `ad-embed-disease`, `ad-embed-feat`, `ad-embed-item`, `ad-pf2-note`, `ad-pf2-ritual`.
 
 ## Convert 5eTools JSON data
 
 > [!NOTE]
 > Instructions here use backslashes to wrap lines for readability (a common practice for Linux-based command shells).
 >
-> _If you are using Windows_, you will need to remove the backslashes and put the command on a single line. You may also need to append `.exe` to the command name (though it should work without).
+> *If you are using Windows*, you will need to remove the backslashes and put the command on a single line. You may also need to append `.exe` to the command name (though it should work without).
 
 1. Invoke the CLI with the `--version` option.
 
@@ -170,7 +168,6 @@ Choose the one you are most comfortable with:
     - `--index` generates two index files: `all-index.json` and `src-index.json`.
 
         > 🚀 TIP:
-        >
         > - Use `all-index.json` to see the reference keys for all discovered content. This can confirm that an included source was actually read.
         > - Use `src-index.json` to see the reference keys for content that was included in the generated output. Use this to confirm that your source selection is working as expected.
 
@@ -196,7 +193,7 @@ Choose the one you are most comfortable with:
 
 Next step:
 
--   Create your own [configuration file](docs/configuration.md).
+- Create your own [configuration file](docs/configuration.md).
 
 ## Convert Pf2eTools JSON data
 
@@ -205,7 +202,7 @@ Next step:
 > [!NOTE]
 > Instructions here use backslashes to wrap lines for readability (a common practice for Linux-based command shells).
 >
-> _If you are using Windows_, you will need to remove the backslashes and put the command on a single line. You may also need to append `.exe` to the command name (though it should work without).
+> *If you are using Windows*, you will need to remove the backslashes and put the command on a single line. You may also need to append `.exe` to the command name (though it should work without).
 
 1. Invoke the CLI with the `--version` option:
 
@@ -237,10 +234,9 @@ Next step:
     - `-g pf2e` The game system! Pathfinder 2e!
     - `--index` generates two index files: `all-index.json` and `src-index.json`.
 
-        > 🚀 TIP:
-        >
-        > - Use `all-index.json` to see the reference keys for all discovered content. This can confirm that an included source was actually read.
-        > - Use `src-index.json` to see the reference keys for content that was included in the generated output. Use this to confirm that your source selection is working as expected.
+      > 🚀 TIP:
+      > - Use `all-index.json` to see the reference keys for all discovered content. This can confirm that an included source was actually read.
+      > - Use `src-index.json` to see the reference keys for content that was included in the generated output. Use this to confirm that your source selection is working as expected.
 
     - `-o dm` The target output directory. Files will be created in this directory.
 
@@ -263,7 +259,7 @@ Next step:
 
 Next step:
 
--   Create your own [configuration file](docs/configuration.md).
+- Create your own [configuration file](docs/configuration.md).
 
 ## Convert Homebrew JSON data
 
@@ -272,7 +268,7 @@ The CLI tool can also import homebrewed content, though this content must still 
 Perhaps the simplest way to import homebrew is to use existing homebrew data from the 5eTools homebrew GitHub repo: <https://github.com/TheGiddyLimit/homebrew>.
 
 > [!TIP]
-> 🍺 _You only need the specific file you wish to import_.
+> 🍺 *You only need the specific file you wish to import*.
 >
 > Homebrew data is different from the 5eTools data. Each homebrew file is a complete reference. If you compare it to cooking: the 5eTools mirror repo is organized by ingredient (all of the carrots, all of the onions, ...); homebrew data is organized by prepared meal / complete recipe.
 
@@ -303,7 +299,7 @@ For example, if you want to use Benjamin Huffman's popular homebrewed [Pugilist 
     - `path/to/` is a placeholder for a relative or absolute path to the file[^1]. Here are a few ways to determine the path to a file:
         - You may be able to drag and drop the file into the terminal window.
         - You may be able to right-click on the file and select "Copy Path".
-        - _Windows users_: When pasting the path into a text editor, use find/replace to replace all `\` with `/`.
+        - *Windows users*: When pasting the path into a text editor, use find/replace to replace all `\` with `/`.
 
 3. Run the command like so (for 5e homebrew):
 
@@ -325,15 +321,15 @@ The process is similar for other homebrew, including your own, as long as it is 
 
 ## Where to find help
 
--   There is a `#cli-support` thread in the `#tabletop-games` channel of the [Obsidian Discord](https://discord.gg/veuWUTm).
--   There is a `TTRPG-convert-help` post in the `obsidian-support` forum of the [Obsidian TTRPG Community Discord](https://discord.gg/Zpmr37Uv).
--   There is a TTRPG-convert tutorial (currently aimed at Windows users, but much of it is helpful no matter your OS) at [Obsidian TTRPG Tutorials](https://obsidianttrpgtutorials.com/Obsidian+TTRPG+Tutorials/Plugin+Tutorials/TTRPG-Convert-CLI/TTRPG-Convert-CLI+5e).
--   If you open an issue for an error, run with the `--debug` and `--log` options, and attach the log file to the issue.
+- There is a `#cli-support` thread in the `#tabletop-games` channel of the [Obsidian Discord](https://discord.gg/veuWUTm).
+- There is a `TTRPG-convert-help` post in the `obsidian-support` forum of the [Obsidian TTRPG Community Discord](https://discord.gg/Zpmr37Uv).
+- There is a TTRPG-convert tutorial (currently aimed at Windows users, but much of it is helpful no matter your OS) at [Obsidian TTRPG Tutorials](https://obsidianttrpgtutorials.com/Obsidian+TTRPG+Tutorials/Plugin+Tutorials/TTRPG-Convert-CLI/TTRPG-Convert-CLI+5e).
+- If you open an issue for an error, run with the `--debug` and `--log` options, and attach the log file to the issue.
 
 ### Want to help fix it?
 
--   If you're familiar with the command line and are comfortable running the tool, please consider running [unreleased snapshots](docs/alternateRun.md#using-unreleased-snapshots) and reporting issues.
--   If you want to contribute, I'll take help of all kinds: documentation, examples, sample templates, and stylesheets are just as important as Java code. See [CONTRIBUTING](CONTRIBUTING.md).
+- If you're familiar with the command line and are comfortable running the tool, please consider running [unreleased snapshots](docs/alternateRun.md#using-unreleased-snapshots) and reporting issues.
+- If you want to contribute, I'll take help of all kinds: documentation, examples, sample templates, and stylesheets are just as important as Java code. See [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Other notes
 
