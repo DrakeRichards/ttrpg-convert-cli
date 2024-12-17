@@ -1,6 +1,9 @@
+name: ttrpg-convert
 services:
   ttrpg-convert:
     build: .
+    entrypoint: ["java", "-jar", "/app/app.jar"]
+    working_dir: /app
     volumes:
       - ./data:/app/data
       - ./output:/app/output

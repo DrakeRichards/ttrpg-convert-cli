@@ -31,7 +31,7 @@
     docker compose run ttrpg-convert --help
     ```
 
-1. To use the container, run `docker compose run ttrpg-convert` followed by the arguments you would normally pass to the .jar file.
+1. To use the container, run `docker compose run --rm ttrpg-convert` followed by the arguments you would normally pass to the .jar file.
 
     ```bash
     docker compose run ttrpg-convert <arguments>
