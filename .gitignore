@@ -43,9 +43,7 @@ nb-configuration.xml
 *.rej
 
 # User Data
-config
 data
-templates
 output
 
 # Local environment
