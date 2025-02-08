@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import dev.ebullient.convert.io.Tui;
 import dev.ebullient.convert.qute.ImageRef;
 import dev.ebullient.convert.qute.NamedText;
+import dev.ebullient.convert.qute.QuteUtil;
 import dev.ebullient.convert.tools.Tags;
 import dev.ebullient.convert.tools.dnd5e.Tools5eIndexType;
 import dev.ebullient.convert.tools.dnd5e.Tools5eSources;
@@ -91,8 +92,6 @@ public class QuteMonster extends Tools5eQuteBase {
     public final String environment;
     /** Token image as {@link dev.ebullient.convert.qute.ImageRef} */
     public final ImageRef token;
-    /** List of {@link dev.ebullient.convert.qute.ImageRef} related to the creature */
-    public final List<ImageRef> fluffImages;
 
     public QuteMonster(Tools5eSources sources, String name, String source, boolean isNpc, String size, String type,
             String subtype, String alignment,
@@ -105,9 +104,9 @@ public class QuteMonster extends Tools5eQuteBase {
             Collection<NamedText> legendary,
             Collection<NamedText> legendaryGroup, String legendaryGroupLink,
             List<Spellcasting> spellcasting, String description, String environment,
-            ImageRef tokenImage, List<ImageRef> fluffImages, Tags tags) {
+            ImageRef tokenImage, List<ImageRef> images, Tags tags) {
 
-        super(sources, name, source, description, tags);
+        super(sources, name, source, images, description, tags);
 
         this.isNpc = isNpc;
         this.size = size;
@@ -137,19 +136,11 @@ public class QuteMonster extends Tools5eQuteBase {
         this.description = description;
         this.environment = environment;
         this.token = tokenImage;
-        this.fluffImages = fluffImages;
     }
 
     @Override
     public String targetPath() {
         return Tools5eQuteBase.monsterPath(isNpc, type);
-    }
-
-    /** List of source books (abbreviated name). Fantasy statblock uses this list. */
-    public final List<String> getBooks() {
-        return getSourceAndPage().stream()
-                .map(x -> x.source)
-                .toList();
     }
 
     /** See {@link dev.ebullient.convert.tools.dnd5e.qute.AcHp#hp} */
@@ -367,7 +358,7 @@ public class QuteMonster extends Tools5eQuteBase {
      */
     @TemplateData
     @RegisterForReflection
-    public static class Spellcasting {
+    public static class Spellcasting implements QuteUtil {
         /** Name: "Spellcasting" or "Innate Spellcasting" */
         public String name;
         /** Formatted text that should be printed before the list of spells */
@@ -455,25 +446,6 @@ public class QuteMonster extends Tools5eQuteBase {
             }
             maybeAddBlankLine(text);
             text.add(String.format("**%s**: %s", title, String.join(", ", spells)));
-        }
-
-        void maybeAddBlankLine(List<String> text) {
-            if (text.size() > 0 && !text.get(text.size() - 1).isBlank()) {
-                text.add("");
-            }
-        }
-
-        String levelToString(String level) {
-            switch (level) {
-                case "1":
-                    return "1st";
-                case "2":
-                    return "2nd";
-                case "3":
-                    return "3rd";
-                default:
-                    return level + "th";
-            }
         }
     }
 

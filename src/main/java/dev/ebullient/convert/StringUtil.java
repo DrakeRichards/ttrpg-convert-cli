@@ -37,6 +37,12 @@ public class StringUtil {
         return value == null || value.isEmpty() ? fallback : value;
     }
 
+    public static String valueOrDefault(String[] parts, int index, String fallback) {
+        return index < 0 || index >= parts.length
+                ? fallback
+                : valueOrDefault(parts[index], fallback);
+    }
+
     public static String uppercaseFirst(String value) {
         return value == null || value.isEmpty() ? value : Character.toUpperCase(value.charAt(0)) + value.substring(1);
     }
@@ -371,6 +377,20 @@ public class StringUtil {
         } catch (NumberFormatException e) {
             return level + "th";
         }
+    }
+
+    public static String toAnchorTag(String x) {
+        return x.replace(" ", "%20")
+                .replace(":", "")
+                .replace(".", "")
+                .replace('‑', '-');
+    }
+
+    // markdown link to href
+    public static String markdownLinkToHtml(String x) {
+        return x.replaceAll("\\[([^\\]]+)\\]\\(([^\\s)]+)(?:\\s\"[^\"]*\")?\\)",
+                "<a href=\"$2\">$1</a>");
+
     }
 
     /**

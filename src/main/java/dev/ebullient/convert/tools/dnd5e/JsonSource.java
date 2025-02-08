@@ -148,7 +148,7 @@ public interface JsonSource extends JsonTextReplacement {
 
         // entriesOtherSource handled here.
         if (!source.isEmpty() && !cfg().sourceIncluded(source)) {
-            if (!cfg().sourceIncluded(getSources())) {
+            if (!getSources().includedByConfig()) {
                 return;
             }
         }
@@ -292,7 +292,7 @@ public interface JsonSource extends JsonTextReplacement {
             return; // skipped or not found
         }
         if (parseState().featureTypeDepth() > 2) {
-            tui().errorf("Cycle in class or subclass features found in %s", cf.cfSources);
+            tui().errorf("Cycle in class or subclass features found in %s", cf.cfSources());
             // this is within an existing feature description. Emit as a link
             cf.appendLink(this, text, parseState().getSource(featureType));
         } else if (parseState().inList()) {
@@ -648,7 +648,7 @@ public interface JsonSource extends JsonTextReplacement {
             }
         } else {
             text.add(link);
-            tui().warnf(Msg.UNRESOLVED, "unable to find statblock target: %s", entry);
+            tui().warnf(Msg.UNRESOLVED, "unable to find statblock target %s from %s", entry, getSources());
         }
     }
 
@@ -745,7 +745,7 @@ public interface JsonSource extends JsonTextReplacement {
                 }
                 if (!caption.isBlank()) {
                     table.add(0, "");
-                    table.add(0, "**" + caption + "**");
+                    table.add(0, "**" + replaceText(caption) + "**");
                 }
             } finally {
                 parseState().pop(pushTable);
@@ -925,7 +925,7 @@ public interface JsonSource extends JsonTextReplacement {
             case "C" -> "Chaotic";
             case "CE" -> "Chaotic Evil";
             case "CG" -> "Chaotic Good";
-            case "CECG" -> "Chaotic Evil or Chaotic Good";
+            case "CECG", "CGCE" -> "Chaotic Evil or Chaotic Good";
             case "CGCN" -> "Chaotic Good or Chaotic Neutral";
             case "CGNE" -> "Chaotic Good or Neutral Evil";
             case "CECN" -> "Chaotic Evil or Chaotic Neutral";
@@ -961,7 +961,7 @@ public interface JsonSource extends JsonTextReplacement {
         };
     }
 
-    default int levelToPb(int level) {
+    static int levelToPb(int level) {
         // 2 + (¼ * (Level – 1))
         return 2 + ((int) (.25 * (level - 1)));
     }
@@ -1058,25 +1058,6 @@ public interface JsonSource extends JsonTextReplacement {
             case "V" -> "Varies";
             case "SM" -> "Small or Medium";
             default -> "Unknown";
-        };
-    }
-
-    default String levelToText(String level) {
-        return switch (level) {
-            case "0" -> "cantrip";
-            case "1" -> "1st-level";
-            case "2" -> "2nd-level";
-            case "3" -> "3rd-level";
-            default -> level + "th-level";
-        };
-    }
-
-    static String levelToString(int level) {
-        return switch (level) {
-            case 1 -> "1st";
-            case 2 -> "2nd";
-            case 3 -> "3rd";
-            default -> level + "th";
         };
     }
 
@@ -1191,6 +1172,16 @@ public interface JsonSource extends JsonTextReplacement {
         return String.join(", ", result);
     }
 
+    public static String spellLevelToText(String level) {
+        return switch (level) {
+            case "0", "c" -> "cantrip";
+            case "1" -> "1st-level";
+            case "2" -> "2nd-level";
+            case "3" -> "3rd-level";
+            default -> level + "th-level";
+        };
+    }
+
     @RegisterForReflection
     @JsonIgnoreProperties(ignoreUnknown = true)
     class JsonMediaHref {
@@ -1261,7 +1252,6 @@ public interface JsonSource extends JsonTextReplacement {
         by,
         className,
         classSource,
-        classFeatureKeys, // ELH: keys for related class/subclass features
         condition, // speed, ac
         count,
         cr,
@@ -1284,6 +1274,7 @@ public interface JsonSource extends JsonTextReplacement {
         number, // speed
         optionalfeature,
         otherSources,
+        parentSource,
         prop, // statblock
         race,
         regionalEffects, // legendary group

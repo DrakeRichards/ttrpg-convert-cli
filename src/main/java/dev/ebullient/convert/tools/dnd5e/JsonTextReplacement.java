@@ -1,10 +1,14 @@
 package dev.ebullient.convert.tools.dnd5e;
 
 import static dev.ebullient.convert.StringUtil.isPresent;
+import static dev.ebullient.convert.StringUtil.toAnchorTag;
+import static dev.ebullient.convert.StringUtil.valueOrDefault;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -32,7 +36,7 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
     static final Pattern linkifyPattern = Pattern.compile("\\{@("
             + "|action|background|card|class|condition|creature|deck|deity|disease|facility"
             + "|feat|hazard|item|itemMastery|itemProperty|itemType|legroup|object|psionic|race|reward"
-            + "|sense|skill|spell|status|table|variantrule|vehicle"
+            + "|sense|skill|spell|status|subclass|table|variantrule|vehicle"
             + "|optfeature|classFeature|subclassFeature|trap) ([^}]+)}");
     static final Pattern chancePattern = Pattern.compile("\\{@chance ([^}]+)}");
     static final Pattern fontPattern = Pattern.compile("\\{@font ([^}]+)}");
@@ -41,16 +45,20 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
     static final Pattern quickRefPattern = Pattern.compile("\\{@quickref ([^}]+)}");
     static final Pattern notePattern = Pattern.compile("\\{@(note|tip) ([^}]+)}");
     static final Pattern footnotePattern = Pattern.compile("\\{@footnote ([^}]+)}");
-    static final Pattern abilitySavePattern = Pattern.compile("\\{@(ability|savingThrow) ([^}]+)}"); // {@ability str 20}
+    static final Pattern abilitySavePattern = Pattern.compile("\\{@(ability|savingThrow) ([^}]+)}"); // {@ability str
+                                                                                                     // 20}
     static final Pattern savingThrowPattern = Pattern.compile("\\{@actSave ([^}]+)}");
     static final Pattern attackPattern = Pattern.compile("\\{@atkr? ([^}]+)}");
-    static final Pattern skillCheckPattern = Pattern.compile("\\{@skillCheck ([^}]+)}"); // {@skillCheck animal_handling 5}
+    static final Pattern skillCheckPattern = Pattern.compile("\\{@skillCheck ([^}]+)}"); // {@skillCheck animal_handling
+                                                                                         // 5}
     static final Pattern optionalFeaturesFilter = Pattern.compile("\\{@filter ([^|}]+)\\|optionalfeatures\\|([^}]*)}");
     static final Pattern featureTypePattern = Pattern.compile("(?:[Ff]eature )?[Tt]ype=([^|}]+)");
     static final Pattern featureSourcePattern = Pattern.compile("source=([^|}]+)");
     static final Pattern superscriptCitationPattern = Pattern.compile("\\{@(sup|cite) ([^}]+)}");
     static final Pattern promptPattern = Pattern.compile("#\\$prompt_number(?::(.*?))?\\$#");
     static final String subclassFeatureMask = "subclassfeature\\|(.*)\\|.*?\\|.*?\\|.*?\\|.*?\\|(\\d+)\\|.*";
+
+    static final Set<String> missingKeys = new HashSet<>();
 
     Tools5eIndex index();
 
@@ -178,12 +186,14 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
         try {
             result = replacePromptStrings(result);
 
-            // {@dice .. }, {@damage ..}{@hit ..}, {@d20 ..}, {@initiative ...}, {@scaledice..}, {@scaledamage..}
+            // {@dice .. }, {@damage ..}{@hit ..}, {@d20 ..}, {@initiative ...},
+            // {@scaledice..}, {@scaledamage..}
             result = replaceWithDiceRoller(result);
 
             result = chancePattern.matcher(result).replaceAll((match) -> {
                 // "Chance tags; similar to dice roller tags, but output success/failure.
-                // {@chance 50}; {@chance 50|display text}; {@chance 50|display text|rolled by name};
+                // {@chance 50}; {@chance 50|display text}; {@chance 50|display text|rolled by
+                // name};
                 // {@chance 50|display text|rolled by name|on success text};
                 // {@chance 50|display text|rolled by name|on success text|on failure text}.",
                 String[] parts = match.group(1).split("\\|");
@@ -213,7 +223,8 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
             });
 
             result = homebrewPattern.matcher(result).replaceAll((match) -> {
-                // {@homebrew changes|modifications}, {@homebrew additions} or {@homebrew |removals}
+                // {@homebrew changes|modifications}, {@homebrew additions} or {@homebrew
+                // |removals}
                 String s = match.group(1);
                 int pos = s.indexOf('|');
                 if (pos == 0) { // removal
@@ -264,9 +275,6 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
                 return parts[0];
             });
 
-            result = linkifyPattern.matcher(result)
-                    .replaceAll(this::linkify);
-
             result = fontPattern.matcher(result).replaceAll((match) -> {
                 String[] parts = match.group(1).split("\\|");
                 String fontFamily = Tools5eSources.getFontReference(parts[1]);
@@ -281,8 +289,10 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
                 List<String> type = new ArrayList<>();
                 String method = "";
                 // render.js Renderer.attackTagToFull
-                // const ptType = tags.includes("m") ? "Melee " : tags.includes("r") ? "Ranged " : tags.includes("g") ? "Magical " : tags.includes("a") ? "Area " : "";
-                // const ptMethod = tags.includes("w") ? "Weapon " : tags.includes("s") ? "Spell " : tags.includes("p") ? "Power " : "";
+                // const ptType = tags.includes("m") ? "Melee " : tags.includes("r") ? "Ranged "
+                // : tags.includes("g") ? "Magical " : tags.includes("a") ? "Area " : "";
+                // const ptMethod = tags.includes("w") ? "Weapon " : tags.includes("s") ? "Spell
+                // " : tags.includes("p") ? "Power " : "";
                 if (match.group(1).contains("m")) {
                     type.add("Melee ");
                 }
@@ -311,7 +321,8 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
                         .replaceAll("\\{@hitYourSpellAttack ([^}]+)}", "$1")
                         .replaceAll("\\{@hitYourSpellAttack}", "the summoner's spell attack modifier")
                         // "Internal links: {@5etools This Is Your Life|lifegen.html}",
-                        // "External links: {@link https://discord.gg/5etools} or {@link Discord|https://discord.gg/5etools}"
+                        // "External links: {@link https://discord.gg/5etools} or {@link
+                        // Discord|https://discord.gg/5etools}"
                         .replaceAll("\\{@link ([^}|]+)\\|([^}]+)}", "$1 ($2)") // this must come first
                         .replaceAll("\\{@link ([^}|]+)}", "$1") // this must come first
                         .replaceAll("\\{@5etools ([^}|]+)\\|?[^}]*}", "$1")
@@ -339,7 +350,8 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
                         .replaceAll("\\{@language ([^|}]+)\\|?[^}]*}", "$1")
                         .replaceAll("\\{@book ([^}|]+)\\|?[^}]*}", "\"$1\"")
                         .replaceAll("\\{@h}", "*Hit:* ") // render.js Renderer.tag
-                        .replaceAll("\\{@m}", "*Miss:* ") // render.js Renderer.tag
+                        .replaceAll("\\{@m}", "*Miss:* ")
+                        .replaceAll("\\{@hom}", "*Hit or Miss:* ")// render.js Renderer.tag
                         .replaceAll("\\{@actSaveFail}", "*Failure:*") // render.js Renderer.tag
                         .replaceAll("\\{@actSaveSuccess}", "*Success:*") // render.js Renderer.tag
                         .replaceAll("\\{@actSaveSuccessOrFail}", "*Failure or Success:*") // render.js Renderer.tag
@@ -374,9 +386,12 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
             }
 
             result = footnotePattern.matcher(result).replaceAll((match) -> {
-                // {@footnote directly in text|This is primarily for homebrew purposes, as the official texts (so far) avoid using footnotes},
-                // {@footnote optional reference information|This is the footnote. References are free text.|Footnote 1, page 20}.",
-                // We're converting these to _inline_ markdown footnotes, as numbering is difficult to track
+                // {@footnote directly in text|This is primarily for homebrew purposes, as the
+                // official texts (so far) avoid using footnotes},
+                // {@footnote optional reference information|This is the footnote. References
+                // are free text.|Footnote 1, page 20}.",
+                // We're converting these to _inline_ markdown footnotes, as numbering is
+                // difficult to track
                 String[] parts = match.group(1).split("\\|");
                 if (parts[0].contains("<sup>")) {
                     // This already assumes what the footnote name will be
@@ -435,14 +450,14 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
 
     default String replaceSkillOrAbility(MatchResult match) {
         // format: {@ability str 20} or {@ability str 20|Display Text}
-        //      or {@ability str 20|Display Text|Roll Name Text}
+        // or {@ability str 20|Display Text|Roll Name Text}
         // format: {@savingThrow str 5} or {@savingThrow str 5|Display Text}
-        //      or {@savingThrow str 5|Display Text|Roll Name Text}
+        // or {@savingThrow str 5|Display Text|Roll Name Text}
         String[] parts = match.group(2).split("\\|");
         String[] score = parts[0].split(" ");
 
         boolean abilityCheck = match.group(1).equals("ability");
-        String text = parts.length > 1 && !parts[1].isBlank() ? parts[1] : null;
+        String text = valueOrDefault(parts, 1, null);
 
         SkillOrAbility ability = index().findSkillOrAbility(score[0], getSources());
 
@@ -459,8 +474,7 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
             DiceRoller roller = cfg().useDiceRoller();
             boolean notSuppressed = roller == DiceRoller.enabledUsingFS && !parseState().inTrait();
             if (!abilityCheck && (roller == DiceRoller.enabled || notSuppressed)) {
-                String dtxt = parseState().inMarkdownTable() ? "\\\\|text(" : "|text(";
-                mod = "`dice: d20" + mod + dtxt + mod + ")`";
+                mod = "`dice: d20" + mod + "|text(" + mod + ")`";
             }
 
             return "%s (%s)".formatted(text == null ? ability.value() : text, mod);
@@ -468,14 +482,14 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
     }
 
     default String replaceSkillCheck(MatchResult match) {
-        // format: {@skillCheck animal_handling 5} or {@skillCheck animal_handling 5|Display Text}
-        //      or {@skillCheck animal_handling 5|Display Text|Roll Name Text}
+        // format: {@skillCheck animal_handling 5} or {@skillCheck animal_handling
+        // 5|Display Text}
+        // or {@skillCheck animal_handling 5|Display Text|Roll Name Text}
         String[] parts = match.group(1).split("\\|");
         String[] score = parts[0].split(" ");
         SkillOrAbility skill = index().findSkillOrAbility(score[0], getSources());
-        String text = parts.length > 1 && !parts[1].isBlank()
-                ? parts[1]
-                : linkifyRules(Tools5eIndexType.skill, skill.value(), "skills");
+        String text = valueOrDefault(parts, 1,
+                linkifyRules(Tools5eIndexType.skill, skill.value(), "skills"));
 
         String dice = score[1];
         if (score[1].matches("\\d+")) {
@@ -492,15 +506,26 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
         return "%s (%s)".formatted(text, dice);
     }
 
+    default String linkifySkill(SkillOrAbility skill) {
+        String source = skill.source();
+        return linkify(Tools5eIndexType.skill,
+                "%s|%s|%s".formatted(skill.value(), source, skill.value()));
+    }
+
     default String linkifyRules(Tools5eIndexType type, String text, String rules) {
         // {@condition stunned} assumes PHB by default,
-        // {@condition stunned|PHB} can have sources added with a pipe (not that it's ever useful),
+        // {@condition stunned|PHB} can have sources added with a pipe (not that it's
+        // ever useful),
         // {@condition stunned|PHB|and optional link text added with another pipe}.",
 
         String[] parts = text.split("\\|");
         String name = parts[0];
-        String source = parts.length > 1 ? parts[1] : "PHB";
-        String linkText = parts.length > 2 ? parts[2] : name;
+        String source = valueOrDefault(parts, 1, type.defaultSourceString());
+        String linkText = valueOrDefault(parts, 2, name);
+
+        if (name.isBlank()) {
+            return "[%s](%s%s.md)".formatted(linkText, index().rulesVaultRoot(), rules);
+        }
 
         String aliasKey = index().getAliasOrDefault(type.createKey(name, source));
         if (index().isExcluded(aliasKey)) {
@@ -535,7 +560,8 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
         return switch (type) {
             // {@background Charlatan} assumes PHB by default,
             // {@background Anthropologist|toa} can have sources added with a pipe,
-            // {@background Anthropologist|ToA|and optional link text added with another pipe}.",
+            // {@background Anthropologist|ToA|and optional link text added with another
+            // pipe}.",
             // {@feat Alert} assumes PHB by default,
             // {@feat Elven Accuracy|xge} can have sources added with a pipe,
             // {@feat Elven Accuracy|xge|and optional link text added with another pipe}.",
@@ -553,10 +579,13 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
             // {@object Ballista|DMG|and optional link text added with another pipe}.",
             // {@optfeature Agonizing Blast} assumes PHB by default,
             // {@optfeature Aspect of the Moon|xge} can have sources added with a pipe,
-            // {@optfeature Aspect of the Moon|xge|and optional link text added with another pipe}.",
+            // {@optfeature Aspect of the Moon|xge|and optional link text added with another
+            // pipe}.",
             // {@psionic Mastery of Force} assumes UATheMysticClass by default
-            // {@psionic Mastery of Force|UATheMysticClass} can have sources added with a pipe
-            // {@psionic Mastery of Force|UATheMysticClass|and optional link text added with another pipe}.",
+            // {@psionic Mastery of Force|UATheMysticClass} can have sources added with a
+            // pipe
+            // {@psionic Mastery of Force|UATheMysticClass|and optional link text added with
+            // another pipe}.",
             // {@race Human} assumes PHB by default,
             // {@race Aasimar (Fallen)|VGM}
             // {@race Aasimar|DMG|racial traits for the aasimar}
@@ -565,16 +594,19 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
             // {@race dwarf (hill)||Dwarf, hill}
             // {@reward Blessing of Health} assumes DMG by default,
             // {@reward Blessing of Health} can have sources added with a pipe,
-            // {@reward Blessing of Health|DMG|and optional link text added with another pipe}.",
+            // {@reward Blessing of Health|DMG|and optional link text added with another
+            // pipe}.",
             // {@spell acid splash} assumes PHB by default,
             // {@spell tiny servant|xge} can have sources added with a pipe,
             // {@spell tiny servant|xge|and optional link text added with another pipe}.",
             // {@table 25 gp Art Objects} assumes DMG by default,
             // {@table Adventuring Gear|phb} can have sources added with a pipe,
-            // {@table Adventuring Gear|phb|and optional link text added with another pipe}.",
+            // {@table Adventuring Gear|phb|and optional link text added with another
+            // pipe}.",
             // {@trap falling net} assumes DMG by default,
             // {@trap falling portcullis|xge} can have sources added with a pipe,
-            // {@trap falling portcullis|xge|and optional link text added with another pipe}.",
+            // {@trap falling portcullis|xge|and optional link text added with another
+            // pipe}.",
             // {@vehicle Galley} assumes GoS by default,
             // {@vehicle Galley|UAOfShipsAndSea} can have sources added with a pipe,
             // {@vehicle Galley|GoS|and optional link text added with another pipe}.",
@@ -587,6 +619,7 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
                     legendaryGroup,
                     object,
                     optfeature,
+                    psionic,
                     race,
                     reward,
                     spell,
@@ -602,7 +635,8 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
             case skill -> linkifyRules(type, s, "skills");
             case itemMastery, itemProperty, itemType -> linkifyItemAttribute(type, s);
             case monster -> linkifyCreature(s);
-            case subclass, classtype -> linkifyClass(s);
+            case subclass -> linkifySubclass(s); // RARE!!
+            case classtype -> linkifyClass(s);
             case deity -> linkifyDeity(s);
             case card -> linkifyCardType(s);
             case classfeature -> linkifyClassFeature(s);
@@ -626,8 +660,8 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
 
     default String linkifyType(Tools5eIndexType type, String match) {
         String[] parts = match.split("\\|");
-        String source = parts.length > 1 && !parts[1].isBlank() ? parts[1] : type.defaultSourceString();
-        String linkText = parts.length > 2 ? parts[2] : parts[0];
+        String source = valueOrDefault(parts, 1, type.defaultSourceString());
+        String linkText = valueOrDefault(parts, 2, parts[0]);
 
         String key = index().getAliasOrDefault(type.createKey(parts[0].trim(), source));
         return linkifyType(type, key, linkText, match);
@@ -638,9 +672,11 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
         JsonNode jsonSource = index().getNode(aliasKey); // filtered
         if (jsonSource == null) {
             if (index().getOrigin(aliasKey) == null) {
-                // sources can be excluded, that's fine.. but if this is something that doesn't exist at all..
+                // sources can be excluded, that's fine.. but if this is something that doesn't
+                // exist at all..
                 tui().debugf(Msg.UNRESOLVED, "unresolvable {@%s %s}   as [%s]   from %s",
                         type, match, aliasKey, parseState().getSource());
+                // log a stack trace of how we got here
             }
             return linkText;
         }
@@ -656,7 +692,7 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
         String[] parts = match.split("\\|");
         String cardName = parts[0];
         String deckName = parts[1];
-        String source = parts.length < 3 || parts[2].isBlank() ? Tools5eIndexType.card.defaultSourceString() : parts[2];
+        String source = valueOrDefault(parts, 2, Tools5eIndexType.card.defaultSourceString());
 
         String key = index().getAliasOrDefault(Tools5eIndexType.deck.createKey(deckName, source));
         if (index().isExcluded(key)) {
@@ -676,19 +712,9 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
         // {@deity Ioun|dawn war|dmg|and optional link text added with another pipe}.",
         String[] parts = match.split("\\|");
         String deity = parts[0];
-        String source = "phb";
-        String linkText = deity;
-        String pantheon = "Faerûnian";
-
-        if (parts.length > 3) {
-            linkText = parts[3];
-        }
-        if (parts.length > 2) {
-            source = parts[2];
-        }
-        if (parts.length > 1) {
-            pantheon = parts[1];
-        }
+        String pantheon = valueOrDefault(parts, 1, "Forotten Realms");
+        String source = valueOrDefault(parts, 2, Tools5eIndexType.deity.defaultSourceString());
+        String linkText = valueOrDefault(parts, 3, deity);
         String key = index().getAliasOrDefault(Tools5eIndexType.deity.createKey(parts[0], source));
         return linkOrText(linkText, key,
                 Tools5eIndexType.deity.getRelativePath(),
@@ -700,26 +726,28 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
         // {@class artificer|uaartificer} can have sources added with a pipe,
         // {@class fighter|phb|optional link text added with another pipe},
         // {@class fighter|phb|subclasses added|Eldritch Knight} with another pipe,
-        // {@class fighter|phb|and class feature added|Eldritch Knight|phb|2-0} with another pipe
+        // {@class fighter|phb|and class feature added|Eldritch Knight|phb|2-0} with
+        // another pipe
         // {@class Barbarian|phb|Path of the Ancestral Guardian|Ancestral Guardian|xge}
         // {@class Fighter|phb|Samurai|Samurai|xge}
         String[] parts = match.split("\\|");
         String className = parts[0];
-        String classSource = parts.length < 2 || parts[1].isEmpty() ? "phb" : parts[1];
-        String linkText = parts.length < 3 || parts[2].isEmpty() ? className : parts[2];
-        String subclass = parts.length < 4 || parts[3].isEmpty() ? null : parts[3];
-        String subclassSource = parts.length < 5 || parts[4].isEmpty() ? classSource : parts[4];
+        String classSource = valueOrDefault(parts, 1, Tools5eIndexType.classtype.defaultSourceString());
+        String linkText = valueOrDefault(parts, 2, className);
+        String subclass = valueOrDefault(parts, 3, null);
+        String subclassSource = valueOrDefault(parts, 4, Tools5eIndexType.classtype.defaultSourceString());
 
         String relativePath = Tools5eIndexType.classtype.getRelativePath();
         if (subclass != null) {
             String key = index()
-                    .getAliasOrDefault(Tools5eIndexType.getSubclassKey(className, classSource, subclass, subclassSource));
+                    .getAliasOrDefault(
+                            Tools5eIndexType.getSubclassKey(className, classSource, subclass, subclassSource));
             // "subclass|path of wild magic|barbarian|phb|"
-            int first = key.indexOf('|');
-            int second = key.indexOf('|', first + 1);
-            subclass = key.substring(first + 1, second);
+            Tools5eSources scSources = Tools5eSources.findSources(key);
             return linkOrText(linkText, key, relativePath,
-                    Tools5eQuteBase.getSubclassResource(subclass, className, classSource, subclassSource));
+                    Tools5eQuteBase.getSubclassResource(
+                            scSources == null ? subclass : scSources.getName(),
+                            className, classSource, subclassSource));
         } else {
             String key = index().getAliasOrDefault(Tools5eIndexType.classtype.createKey(className, classSource));
             return linkOrText(linkText, key, relativePath,
@@ -727,8 +755,33 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
         }
     }
 
+    default String linkifySubclass(String match) {
+        // Only used in homebrew (so far)
+        // "Subclasses:{@subclass Berserker|Barbarian},
+        // {@subclass Berserker|Barbarian},
+        // {@subclass Ancestral Guardian|Barbarian||XGE},
+        // {@subclass Artillerist|Artificer|TCE|TCE}.
+        // Class and subclass source is assumed to be PHB."
+        String[] parts = match.split("\\|");
+        String scShortName = parts[0];
+        String className = parts[1];
+        String classSource = valueOrDefault(parts, 2, Tools5eIndexType.classtype.defaultSourceString());
+        String scSource = valueOrDefault(parts, 3, Tools5eIndexType.subclass.defaultSourceString());
+        String linkText = valueOrDefault(parts, 4, scShortName);
+
+        // "subclass|path of wild magic|barbarian|phb|phb"
+        String key = index()
+                .getAliasOrDefault(
+                        Tools5eIndexType.getSubclassKey(className, classSource, scShortName, scSource));
+        Tools5eSources scSources = Tools5eSources.findSources(key);
+        return linkOrText(linkText, key,
+                Tools5eIndexType.classtype.getRelativePath(),
+                Tools5eQuteBase.getSubclassResource(scSources.getName(), className, classSource, scSource));
+    }
+
     default String linkifyClassFeature(String match) {
-        // "Class Features: Class source is assumed to be PHB, class feature source is assumed to be the same as class source"
+        // "Class Features: Class source is assumed to be PHB, class feature source is
+        // assumed to be the same as class source"
         // {@classFeature Rage|Barbarian||1},
         // {@classFeature Infuse Item|Artificer|TCE|2},
         // {@classFeature Survival Instincts|Barbarian||2|UAClassFeatureVariants},
@@ -778,7 +831,7 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
             featureSource = parseState().getSource();
         }
 
-        OptionalFeatureType oft = index().getOptionalFeatureType(featureType, featureSource);
+        OptionalFeatureType oft = index().getOptionalFeatureType(featureType);
         if (oft == null) {
             return linkText;
         }
@@ -788,13 +841,16 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
     }
 
     default String linkifySubclassFeature(String match) {
-        //"Subclass Features:
+        // "Subclass Features:
         // {@subclassFeature Path of the Berserker|Barbarian||Berserker||3},
         // {@subclassFeature Alchemist|Artificer|TCE|Alchemist|TCE|3},
-        // {@subclassFeature Path of the Battlerager|Barbarian||Battlerager|SCAG|3},  --> "barbarian-path-of-the-... "
-        // {@subclassFeature Blessed Strikes|Cleric||Life||8|UAClassFeatureVariants}, --> "-domain"
+        // {@subclassFeature Path of the Battlerager|Barbarian||Battlerager|SCAG|3}, -->
+        // "barbarian-path-of-the-... "
+        // {@subclassFeature Blessed Strikes|Cleric||Life||8|UAClassFeatureVariants},
+        // --> "-domain"
         // {@subclassFeature Blessed Strikes|Cleric|PHB|Twilight|TCE|8|TCE}
-        // {@subclassFeature Path of the Berserker|Barbarian||Berserker||3||optional display text}.
+        // {@subclassFeature Path of the Berserker|Barbarian||Berserker||3||optional
+        // display text}.
         // Class source is assumed to be PHB.
         // Subclass source is assumed to be PHB.
         // Subclass feature source is assumed to be the same as subclass source.",
@@ -823,8 +879,10 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
         String subclassKey = Tools5eIndexType.subclass.fromChildKey(featureKey);
 
         // look up alias for subclass so link is correct, but don't follow reprints
-        // "subclass|redemption|paladin|phb|" : "subclass|oath of redemption|paladin|phb|",
-        // "subclass|twilight|cleric|phb|tce" : "subclass|twilight domain|cleric|phb|tce"
+        // "subclass|redemption|paladin|phb|"
+        //    : "subclass|oath of redemption|paladin|phb|",
+        // "subclass|twilight|cleric|phb|tce"
+        //    : "subclass|twilight domain|cleric|phb|tce"
         subclassKey = index().getAliasOrDefault(subclassKey, false);
 
         JsonNode subclassNode = index().getNode(subclassKey);
@@ -838,11 +896,13 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
                 return linkText;
             }
             // Examine new subclass node's features, to see if there is a match
-            // e.g. for "subclassfeature|primal companion|ranger|phb|beast master|phb|3|tce",
-            // consider "subclassfeature|primal companion|ranger|xphb|beast master|xphb|3|xphb"
+            // e.g. for
+            //   "subclassfeature|primal companion|ranger|phb|beast master|phb|3|tce",
+            // consider
+            //   "subclassfeature|primal companion|ranger|xphb|beast master|xphb|3|xphb"
             String test = featureKey.replaceAll(subclassFeatureMask, "$1-$2");
             boolean found = false;
-            for (String fkey : Tools5eFields.classFeatureKeys.getListOfStrings(subclassNode, tui())) {
+            for (String fkey : index().findClassFeatures(subclassKey)) {
                 String compare = fkey.replaceAll(subclassFeatureMask, "$1-$2");
                 if (test.equals(compare)) {
                     featureKey = fkey;
@@ -851,7 +911,8 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
                 }
             }
             if (!found) {
-                tui().warnf(Msg.UNRESOLVED, "No equivalent subclass feature found for {@subclassfeature %s} in %s (from %s)",
+                tui().warnf(Msg.UNRESOLVED,
+                        "No equivalent subclass feature found for {@subclassfeature %s} in %s (from %s)",
                         match, subclassKey, getSources().getKey());
                 return linkText;
             }
@@ -882,8 +943,8 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
         // {@creature cow|vgm} can have sources added with a pipe,
         // {@creature cow|vgm|and optional link text added with another pipe}.",
         String[] parts = match.trim().split("\\|");
-        String source = parts.length > 1 && !parts[1].isBlank() ? parts[1] : indexType.defaultSourceString();
-        String linkText = parts.length > 2 ? parts[2] : parts[0];
+        String source = valueOrDefault(parts, 1, indexType.defaultSourceString());
+        String linkText = valueOrDefault(parts, 2, parts[0]);
 
         String key = index().getAliasOrDefault(indexType.createKey(parts[0], source));
         if (index().isExcluded(key)) {
@@ -906,7 +967,7 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
         // "fromVariant": "Action Options",
         // "fromVariant": "Spellcasting|XGE",
         String[] parts = variant.trim().split("\\|");
-        String source = parts.length > 1 ? parts[1] : Tools5eIndexType.variantrule.defaultSourceString();
+        String source = valueOrDefault(parts, 1, Tools5eIndexType.variantrule.defaultSourceString());
         if (!index().sourceIncluded(source)) {
             return "<span title=\"%s\">%s</span>".formatted(TtrpgConfig.sourceToLongName(source), parts[0]);
         } else {
@@ -917,36 +978,29 @@ public interface JsonTextReplacement extends JsonTextConverter<Tools5eIndexType>
     }
 
     default String linkifyItemAttribute(Tools5eIndexType type, String s) {
-        String parts[] = s.split("\\|");
-        String source = parts.length > 1 ? parts[1] : type.defaultSourceString();
-        String linkText = parts.length > 2 ? parts[2] : parts[0];
-        String lookup = "%s|%s".formatted(parts[0], source);
+        String[] parts = s.split("\\|");
+        String name = parts[0];
+        String linkText = valueOrDefault(parts, 2, name);
         return switch (type) {
-            case itemType -> {
-                ItemType itemType = index().findItemType(lookup, getSources());
-                if (itemType == null) {
-                    tui().warnf(Msg.UNRESOLVED, "Item type %s not found from %s", s, getSources().getKey());
-                    yield s;
-                }
-                yield itemType.linkify(linkText);
+            case itemMastery -> {
+                ItemMastery mastery = index().findItemMastery(s, getSources());
+                yield mastery == null
+                        ? linkText
+                        : mastery.linkify(linkText);
             }
             case itemProperty -> {
-                ItemProperty itemProperty = index().findItemProperty(lookup, getSources());
-                if (itemProperty == null) {
-                    tui().warnf(Msg.UNRESOLVED, "Item property %s not found from %s", s, getSources().getKey());
-                    yield s;
-                }
-                yield itemProperty.linkify(linkText);
+                ItemProperty property = index().findItemProperty(s, getSources());
+                yield property == null
+                        ? linkText
+                        : property.linkify(linkText);
             }
-            case itemMastery -> {
-                ItemMastery itemMastery = index().findItemMastery(lookup, getSources());
-                if (itemMastery == null) {
-                    tui().warnf(Msg.UNRESOLVED, "Item type %s not found from %s", s, getSources().getKey());
-                    yield s;
-                }
-                yield itemMastery.linkify(linkText);
+            case itemType -> {
+                ItemType itemType = index().findItemType(s, getSources());
+                yield itemType == null
+                        ? linkText
+                        : itemType.linkify(linkText);
             }
-            default -> linkify(type, s); // should never happen
+            default -> linkText;
         };
     }
 

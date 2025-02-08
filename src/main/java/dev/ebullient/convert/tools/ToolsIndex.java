@@ -16,11 +16,15 @@ import dev.ebullient.convert.tools.pf2e.Pf2eIndex;
 public interface ToolsIndex {
     // Special one-offs for accounting/tracking
     enum TtrpgValue implements JsonNodeReader {
-        indexKey,
-        indexInputType,
         indexBaseItem,
-        isHomebrew,
         indexFluffKey,
+        indexInputType,
+        indexKey,
+        indexParentKey,
+        indexVersionKeys,
+        isHomebrew,
+        homebrewSource,
+        homebrewBaseSource,
     }
 
     static ToolsIndex createIndex() {

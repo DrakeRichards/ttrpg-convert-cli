@@ -2,6 +2,7 @@ package dev.ebullient.convert.tools;
 
 import static dev.ebullient.convert.StringUtil.isPresent;
 import static dev.ebullient.convert.StringUtil.join;
+import static dev.ebullient.convert.StringUtil.toAnchorTag;
 
 import java.nio.file.Path;
 import java.util.ArrayDeque;
@@ -73,6 +74,13 @@ public interface JsonTextConverter<T extends IndexType> {
             System.exit(5);
             return null;
         }
+    }
+
+    default boolean isEmpty(JsonNode node) {
+        return node == null || node.isNull()
+                || (node.isTextual() && node.asText().isBlank()
+                        || (node.isArray() && node.size() == 0)
+                        || (node.isObject() && node.size() == 0));
     }
 
     default boolean isArrayNode(JsonNode node) {
@@ -228,10 +236,11 @@ public interface JsonTextConverter<T extends IndexType> {
     }
 
     default String diceFormula(String diceRoll, String displayText, boolean average) {
-        // needs to be escaped: \\ to escape the \\ so it is preserved in the output
-        String noform = parseState().inMarkdownTable() ? "\\\\|noform" : "|noform";
-        String avg = parseState().inMarkdownTable() ? "\\\\|avg" : "|avg";
-        String dtxt = parseState().inMarkdownTable() ? "\\\\|text(" : "|text(";
+        // don't escape the dice formula here.
+        // see simplifyFormattedDiceText (called consistently from replaceText)
+        String noform = "|noform";
+        String avg = "|avg";
+        String dtxt = "|text(";
         String textValue = displayText == null ? "" : displayText.replace("`", "");
 
         // Only a dice formula in the roll part. May also have display text.
@@ -248,7 +257,7 @@ public interface JsonTextConverter<T extends IndexType> {
     // reduce dice strings.. when parsing tags, we can't see leadng average
     default String simplifyFormattedDiceText(String text) {
         DiceFormulaState formulaState = parseState().diceFormulaState();
-        String dtxt = parseState().inMarkdownTable() ? "\\\\|text(" : "|text(";
+        String dtxt = "|text(";
 
         // 26 (`dice:1d20+8|noform|text(+8)`) --> `dice:1d20+8|noform|text(26)` (`+8`)
         text = textAverageRoll.matcher(text).replaceAll((match) -> {
@@ -265,7 +274,9 @@ public interface JsonTextConverter<T extends IndexType> {
             return " `" + dice + "` " + match.group(3);
         });
 
-        return text;
+        return parseState().inMarkdownTable()
+                ? text.replace("|", "\\|")
+                : text;
     }
 
     /** Tokenizer: use a stack of StringBuilders to deal with nested tags */
@@ -403,7 +414,7 @@ public interface JsonTextConverter<T extends IndexType> {
     }
 
     default boolean prependField(String name, List<String> inner) {
-        if (name != null) {
+        if (isPresent(name)) {
             name = replaceText(name.trim());
             if (inner.isEmpty()) {
                 inner.add(name);
@@ -664,16 +675,19 @@ public interface JsonTextConverter<T extends IndexType> {
         return StreamSupport.stream(iterableFieldNames(source).spliterator(), false);
     }
 
+    default Stream<Entry<String, JsonNode>> streamProps(JsonNode source) {
+        return streamPropsExcluding(source, (JsonNodeReader[]) null);
+    }
+
     default Stream<Entry<String, JsonNode>> streamPropsExcluding(JsonNode source, JsonNodeReader... excludingKeys) {
         if (source == null || !source.isObject()) {
             return Stream.of();
         }
+        if (excludingKeys == null || excludingKeys.length == 0) {
+            return source.properties().stream();
+        }
         return source.properties().stream()
                 .filter(e -> Arrays.stream(excludingKeys).noneMatch(s -> e.getKey().equalsIgnoreCase(s.name())));
-    }
-
-    default String toAnchorTag(String x) {
-        return Tui.toAnchorTag(x);
     }
 
     /** {@link #createLink(String, Path, String, String)} with an empty title */

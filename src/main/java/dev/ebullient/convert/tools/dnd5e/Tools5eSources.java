@@ -1,5 +1,7 @@
 package dev.ebullient.convert.tools.dnd5e;
 
+import static dev.ebullient.convert.StringUtil.isPresent;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,6 +57,18 @@ public class Tools5eSources extends CompendiumSources {
         }
         return SourceAttributes.freeRules2024.coerceBooleanOrDefault(jsonElement, false)
                 || freeRulesKeys.contains(key);
+    }
+
+    public static boolean has2024Content() {
+        // return true if any of the 2024 core sources are enabled
+        return List.of("XPHB", "XDMG", "XMM", "srd52", "freerules2024")
+                .stream().anyMatch(TtrpgConfig.getConfig()::sourceIncluded);
+    }
+
+    public static boolean has2014Content() {
+        // return true if any of the 2024 core sources are enabled
+        return List.of("PHB", "DMG", "MM", "srd", "basicRules")
+                .stream().anyMatch(TtrpgConfig.getConfig()::sourceIncluded);
     }
 
     public static boolean includedByConfig(String key) {
@@ -186,15 +200,15 @@ public class Tools5eSources extends CompendiumSources {
         return "true".equalsIgnoreCase(name) ? null : name;
     }
 
-    final boolean srd;
-    final boolean basicRules;
-    final boolean srd52;
-    final boolean freeRules2024;
-    final Tools5eIndexType type;
-    final String edition;
+    private final boolean srd;
+    private final boolean basicRules;
+    private final boolean srd52;
+    private final boolean freeRules2024;
+    private final Tools5eIndexType type;
+    private final String edition;
 
-    boolean filterRule;
-    boolean cfgIncluded;
+    private boolean filterRule;
+    private boolean cfgIncluded;
 
     private Tools5eSources(Tools5eIndexType type, String key, JsonNode jsonElement) {
         super(type, key, jsonElement);
@@ -204,7 +218,20 @@ public class Tools5eSources extends CompendiumSources {
         this.srd = SourceAttributes.srd.coerceBooleanOrDefault(jsonElement, false);
         this.srd52 = SourceAttributes.srd52.coerceBooleanOrDefault(jsonElement, false);
         this.edition = SourceAttributes.edition.getTextOrEmpty(jsonElement);
+        addBrewSource(TtrpgValue.homebrewSource, jsonElement);
+        addBrewSource(TtrpgValue.homebrewBaseSource, jsonElement);
         testSourceRules();
+    }
+
+    private void addBrewSource(JsonNodeReader field, JsonNode jsonElement) {
+        String source = field.getTextOrNull(jsonElement);
+        if (isPresent(source)) {
+            this.sources.add(source);
+        }
+    }
+
+    public boolean isSrdOrFreeRules() {
+        return srd || basicRules || srd52 || freeRules2024;
     }
 
     /**
@@ -255,6 +282,19 @@ public class Tools5eSources extends CompendiumSources {
                 || (config.sourceIncluded("srd52") && this.srd52)
                 || (config.sourceIncluded("basicrules") && this.basicRules)
                 || (config.sourceIncluded("freerules2024") && this.freeRules2024);
+    }
+
+    @Override
+    public boolean includedBy(Set<String> sources) {
+        CompendiumConfig config = TtrpgConfig.getConfig();
+        if (config.noSources()) {
+            return this.srd || this.basicRules || this.srd52 || this.freeRules2024;
+        }
+        return super.includedBy(sources) ||
+                (this.basicRules && sources.contains("basicrules")) ||
+                (this.srd && sources.contains("srd")) ||
+                (this.srd52 && sources.contains("srd52")) ||
+                (this.freeRules2024 && sources.contains("freerules2024"));
     }
 
     @Override
@@ -360,7 +400,11 @@ public class Tools5eSources extends CompendiumSources {
         if (srdText.isBlank() && basicRulesText.isBlank()) {
             return sourceText;
         }
-        String srdBasic = "Available in " + srdText + (srdText.isEmpty() ? "" : " and ") + basicRulesText;
+        String srdBasic = "Available in " + srdText;
+        if (!srdText.isEmpty() && !basicRulesText.isEmpty()) {
+            srdBasic += " and ";
+        }
+        srdBasic += basicRulesText;
         return sourceText.isEmpty()
                 ? srdBasic
                 : sourceText + ". " + srdBasic;
@@ -448,14 +492,15 @@ public class Tools5eSources extends CompendiumSources {
         testSourceRules();
     }
 
-    @Override
-    public boolean includedBy(Set<String> sources) {
-        return super.includedBy(sources) ||
-                (this.basicRules && sources.contains("basicrules")) ||
-                (this.srd && sources.contains("srd")) ||
-                (this.srd52 && sources.contains("srd52")) ||
-                (this.freeRules2024 && sources.contains("freerules2024")) ||
-                (TtrpgConfig.getConfig().noSources() && (this.srd || this.basicRules));
+    public void amendSources(Set<String> brewSources) {
+        this.sources.addAll(brewSources);
+        testSourceRules();
+    }
+
+    public void amendHomebrewSources(JsonNode homebrewElement) {
+        addBrewSource(TtrpgValue.homebrewBaseSource, homebrewElement);
+        addBrewSource(TtrpgValue.homebrewSource, homebrewElement);
+        testSourceRules();
     }
 
     public boolean contains(Tools5eSources sources) {

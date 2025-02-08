@@ -7,7 +7,6 @@ import java.util.Map;
 
 import dev.ebullient.convert.io.JavadocIgnore;
 import dev.ebullient.convert.tools.IndexType;
-import dev.ebullient.convert.tools.pf2e.Pf2eIndexType;
 
 @JavadocIgnore
 public interface QuteUtil {
@@ -30,6 +29,12 @@ public interface QuteUtil {
     default void addIntegerUnlessEmpty(Map<String, Object> map, String key, Integer value) {
         if (value != null) {
             map.put(key, value);
+        }
+    }
+
+    default void maybeAddBlankLine(List<String> content) {
+        if (content.size() > 0 && !content.get(content.size() - 1).isBlank()) {
+            content.add("");
         }
     }
 
@@ -67,12 +72,25 @@ public interface QuteUtil {
         }
     }
 
+    default String levelToString(String level) {
+        switch (level) {
+            case "1":
+                return "1st";
+            case "2":
+                return "2nd";
+            case "3":
+                return "3rd";
+            default:
+                return level + "th";
+        }
+    }
+
     default String template() {
         throw new UnsupportedOperationException("Tried to call template() on a class which does not have a template defined");
     }
 
     default IndexType indexType() {
-        return Pf2eIndexType.syntheticGroup;
+        throw new UnsupportedOperationException("Tried to call indexType() on a class which does not have a template defined");
     }
 
     @JavadocIgnore

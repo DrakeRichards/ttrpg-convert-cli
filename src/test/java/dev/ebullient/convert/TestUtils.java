@@ -231,6 +231,11 @@ public class TestUtils {
                 errors.add(String.format("Found invalid dice roll in %s: %s", p, l));
             }
         }
+        // Alarm is a basic spell. It should always be linked. If it isn't,
+        // a reference has gone awry somewhere along the way
+        if (p.toString().contains("list-spells-") && l.contains(" Alarm")) {
+            errors.add(String.format("Missing link to Alarm spell in %s: %s", p, l));
+        }
     }
 
     /**
@@ -349,7 +354,8 @@ public class TestUtils {
     }
 
     public static String dump(LaunchResult result) {
-        return "\n" + result.getOutput() + "\nSystem err:\n" + result.getErrorOutput();
+        return "\nSystem out:\n" + result.getOutput()
+                + "\nSystem err:\n" + result.getErrorOutput();
     }
 
     public static void deleteDir(Path path) {
